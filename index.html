@@ -1,344 +1,223 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ฝากเสียงอวยพรเจ้าบ่าวเจ้าสาว</title>
-<style>
-  * {
-    box-sizing: border-box;
-    margin: 0; padding: 0;
-  }
-  body {
-    font-family: 'Prompt', sans-serif, Arial, sans-serif;
-    background-color: #f0f8ff;
-    color: #003366;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px 16px 40px;
-  }
-  header {
-    max-width: 400px;
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: center;
-  }
-  header img {
-    max-height: 150px;
-    object-fit: contain;
-  }
-  h1 {
-    font-size: 1.9rem;
-    text-align: center;
-    font-weight: 700;
-    color: #004080;
-    margin-bottom: 16px;
-    text-shadow: 1px 1px 3px rgba(0, 64, 128, 0.3);
-  }
-  .container {
-    width: 100%;
-    max-width: 420px;
-    background: #e6f0ff;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-    border-radius: 16px;
-    padding: 20px 24px 24px;
-  }
-  label {
-    font-weight: 600;
-    font-size: 1rem;
-    margin-bottom: 6px;
-    display: block;
-    color: #003366;
-  }
-  select, input[type="text"] {
-    width: 100%;
-    padding: 12px 14px;
-    font-size: 1.1rem;
-    border-radius: 10px;
-    border: 2px solid #aaccee;
-    margin-bottom: 20px;
-    transition: border-color 0.3s ease;
-    outline-offset: 2px;
-    outline-color: #cce7ff;
-  }
-  select:focus, input[type="text"]:focus {
-    border-color: #004080;
-  }
-  .greeting {
-    font-size: 1.1rem;
-    margin-bottom: 20px;
-    color: #004080;
-    text-align: center;
-    min-height: 24px;
-  }
-  canvas {
-    width: 100%;
-    height: 60px;
-    background-color: #cce7ff;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1);
-  }
-  .buttons-row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
-  }
-  button {
-    cursor: pointer;
-    background-color: #004080;
-    color: white;
-    border: none;
-    border-radius: 14px;
-    padding: 14px 20px;
-    font-size: 1.15rem;
-    font-weight: 600;
-    min-width: 110px;
-    box-shadow: 0 5px 12px rgba(0, 64, 128, 0.3);
-    transition: background-color 0.3s ease, transform 0.1s ease;
-  }
-  button:hover:not(:disabled) {
-    background-color: #002050;
-    transform: scale(1.05);
-  }
-  button:disabled {
-    background-color: #aaccee;
-    cursor: not-allowed;
-    box-shadow: none;
-  }
-  button:active:not(:disabled) {
-    transform: scale(0.98);
-  }
-  audio.audio-player {
-    width: 100%;
-    margin-top: 12px;
-    border-radius: 12px;
-    outline-offset: 2px;
-    outline-color: #004080;
-    box-shadow: 0 2px 10px rgba(0, 64, 128, 0.2);
-  }
-  @media (max-width: 480px) {
-    h1 {
-      font-size: 1.4rem;
-    }
-    button {
-      padding: 12px 16px;
-      font-size: 1rem;
-      min-width: 90px;
-    }
-    canvas {
-      height: 50px;
-    }
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>บันทึกเสียง</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 2rem; }
+    canvas { width: 100%; height: 100px; border: 1px solid #ccc; margin: 1rem 0; }
+    button { margin: 0.5rem; padding: 1rem; font-size: 1rem; }
+    input, select { padding: 0.5rem; margin: 0.5rem; font-size: 1rem; }
+  </style>
 </head>
 <body>
-<header>
-  <img src="https://i.imgur.com/n0DtfkQ.jpg" alt="โลโก้งานแต่ง" width="150" />
-</header>
-<div class="container">
-  <h1>ฝากเสียงอวยพรเจ้าบ่าวเจ้าสาว</h1>
-  <label for="groupSelect">เลือกกลุ่มของคุณ</label>
-  <select id="groupSelect">
-    <option value="">-- กรุณาเลือก --</option>
-    <option value="groom_family">ญาติเจ้าบ่าว</option>
-    <option value="bride_family">ญาติเจ้าสาว</option>
-    <option value="groom_friends">เพื่อนเจ้าบ่าว</option>
-    <option value="bride_friends">เพื่อนเจ้าสาว</option>
+  <h2>🎤 บันทึกเสียง</h2>
+  <p id="greeting">กรอกชื่อและเลือกกลุ่ม แล้วกดเริ่มอัดเสียง</p>
+  
+  <select id="group">
+    <option value="">-- เลือกกลุ่ม --</option>
+    <option value="A">กลุ่ม A</option>
+    <option value="B">กลุ่ม B</option>
   </select>
-  <label for="nameInput">พิมพ์ชื่อของคุณ (ภาษาอังกฤษ)</label>
-  <input id="nameInput" type="text" placeholder="ชื่อของคุณ" />
-  <div class="greeting" id="greetingText">
-    จะฮา จะซึ้ง จะร้องเพลงก็ได้ ขอแค่พูดถึงเจ้าบ่าวเจ้าสาวบ้างก็พอ 😄❤️
-  </div>
-  <canvas id="audioVisualizer"></canvas>
-  <div class="buttons-row">
-    <button id="playGreetingBtn">📢 ฟังเสียงทักทาย</button>
-    <button id="startBtn" disabled>🎤 เริ่มอัดเสียง</button>
-    <button id="stopBtn" disabled>⏹ หยุด</button>
-    <button id="retryBtn" disabled>🔄 อัดใหม่</button>
-    <button id="playBtn" disabled>▶ ฟัง</button>
-    <button id="uploadBtn" disabled>📤 แชร์ / อัปโหลด</button>
-  </div>
-  <audio id="audioPlayback" class="audio-player" controls></audio>
-</div>
-<script>
-const playGreetingBtn = document.getElementById('playGreetingBtn');
-const startBtn = document.getElementById('startBtn');
-const stopBtn = document.getElementById('stopBtn');
-const retryBtn = document.getElementById('retryBtn');
-const playBtn = document.getElementById('playBtn');
-const uploadBtn = document.getElementById('uploadBtn');
-const nameInput = document.getElementById('nameInput');
-const greetingText = document.getElementById('greetingText');
-const groupSelect = document.getElementById('groupSelect');
-const audioPlayback = document.getElementById('audioPlayback');
-const canvas = document.getElementById('audioVisualizer');
-const canvasCtx = canvas.getContext('2d');
+  <input type="text" id="name" placeholder="ชื่อของคุณ"/>
 
-let mediaRecorder, audioChunks = [], audioBlob, audioUrl;
+  <div>
+    <button id="start">▶️ เริ่มอัด</button>
+    <button id="stop" disabled>⏹ หยุด</button>
+    <button id="play" disabled>🔊 ฟัง</button>
+    <button id="retry" disabled>🔁 อัดใหม่</button>
+    <button id="upload" disabled>📤 ส่ง</button>
+  </div>
+
+  <canvas id="visualizer" width="500" height="100"></canvas>
+  <audio id="audio" controls style="width: 100%; display:none;"></audio>
+
+  <!-- Recorder.js (inline version) -->
+  <script>
+(function(window){var WORKER_PATH='data:application/javascript;base64,'+
+  btoa(`self.onmessage=function(e){switch(e.data.command){case"init":init(e.data.config);break;case"record":record(e.data.buffer);break;case"exportWAV":exportWAV(e.data.type);break;case"clear":clear();break;}};
+  var recLength=0,recBuffers=[],sampleRate;
+  function init(config){sampleRate=config.sampleRate;}
+  function record(inputBuffer){recBuffers.push(inputBuffer[0]);recLength+=inputBuffer[0].length;}
+  function exportWAV(type){var buffer=mergeBuffers(recBuffers,recLength);var dataview=encodeWAV(buffer);var audioBlob=new Blob([dataview],{type:type});self.postMessage(audioBlob);}
+  function clear(){recLength=0;recBuffers=[];}
+  function mergeBuffers(recBuffers,recLength){var result=new Float32Array(recLength);var offset=0;for(var i=0;i<recBuffers.length;i++){result.set(recBuffers[i],offset);offset+=recBuffers[i].length;}return result;}
+  function floatTo16BitPCM(output,offset,input){for(var i=0;i<input.length;i++){var s=Math.max(-1,Math.min(1,input[i]));output.setInt16(offset,s<0?s*0x8000:s*0x7FFF,true);offset+=2;}}
+  function writeString(view,offset,string){for(var i=0;i<string.length;i++){view.setUint8(offset+i,string.charCodeAt(i));}}
+  function encodeWAV(samples){var buffer=new ArrayBuffer(44+samples.length*2);var view=new DataView(buffer);
+  writeString(view,0,'RIFF');view.setUint32(4,36+samples.length*2,true);writeString(view,8,'WAVE');
+  writeString(view,12,'fmt ');view.setUint32(16,16,true);view.setUint16(20,1,true);view.setUint16(22,1,true);
+  view.setUint32(24,sampleRate,true);view.setUint32(28,sampleRate*2,true);view.setUint16(32,2,true);view.setUint16(34,16,true);
+  writeString(view,36,'data');view.setUint32(40,samples.length*2,true);floatTo16BitPCM(view,44,samples);
+  return view;}`); // inline worker
+
+window.Recorder=function(source,config){var cfg=config||{};var bufferLen=cfg.bufferLen||4096;
+this.context=source.context;this.node=this.context.createScriptProcessor(bufferLen,2,2);
+var worker=new Worker(WORKER_PATH);worker.postMessage({command:'init',config:{sampleRate:this.context.sampleRate}});
+var recording=false;var currCallback;
+this.node.onaudioprocess=function(e){if(!recording)return;
+worker.postMessage({command:'record',buffer:[e.inputBuffer.getChannelData(0)]});};
+this.record=function(){recording=true;};
+this.stop=function(){recording=false;};
+this.clear=function(){worker.postMessage({command:'clear'});};
+this.exportWAV=function(cb,type){currCallback=cb;worker.onmessage=function(e){currCallback(e.data);};
+worker.postMessage({command:'exportWAV',type:type||'audio/wav'});};
+source.connect(this.node);this.node.connect(this.context.destination);};
+})(window);
+  </script>
+
+  <!-- Script หลัก -->
+  <script>
+const startBtn = document.getElementById("start");
+const stopBtn = document.getElementById("stop");
+const playBtn = document.getElementById("play");
+const retryBtn = document.getElementById("retry");
+const uploadBtn = document.getElementById("upload");
+const audioPlayback = document.getElementById("audio");
+const greetingText = document.getElementById("greeting");
+const nameInput = document.getElementById("name");
+const groupSelect = document.getElementById("group");
+const canvas = document.getElementById("visualizer");
+const canvasCtx = canvas.getContext("2d");
+
+let recorder, audioBlob, audioUrl;
 let audioContext, analyser, sourceNode, animationId, recordTimeout;
-const MAX_RECORD_TIME_MS = 240000;
-const greetingAudio = new Audio('https://natiphol.github.io/33/Test.mp3');
 
-function drawVisualizer() {
-  if (!analyser) return;
-  const WIDTH = canvas.width;
-  const HEIGHT = canvas.height;
-  const bufferLength = analyser.fftSize;
-  const dataArray = new Uint8Array(bufferLength);
-
-  canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
-  analyser.getByteTimeDomainData(dataArray);
-  canvasCtx.lineWidth = 3;
-  canvasCtx.strokeStyle = '#004080';
-  canvasCtx.beginPath();
-  const sliceWidth = WIDTH / bufferLength;
-  let x = 0;
-  for(let i = 0; i < bufferLength; i++) {
-    const v = dataArray[i] / 128.0;
-    const y = v * HEIGHT / 2;
-    if(i === 0) canvasCtx.moveTo(x, y);
-    else canvasCtx.lineTo(x, y);
-    x += sliceWidth;
-  }
-  canvasCtx.lineTo(WIDTH, HEIGHT / 2);
-  canvasCtx.stroke();
-  animationId = requestAnimationFrame(drawVisualizer);
-}
+const MAX_RECORD_TIME_MS = 240000; // 4 นาที
 
 async function setupRecorder() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorder = new MediaRecorder(stream);
-    audioContext = new AudioContext();
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
     sourceNode = audioContext.createMediaStreamSource(stream);
     analyser = audioContext.createAnalyser();
     analyser.fftSize = 2048;
     sourceNode.connect(analyser);
-    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-    mediaRecorder.onstop = () => {
-      audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-
-      // แก้ไขสำหรับ iOS: รีเซ็ต src ก่อนเซ็ตใหม่
-      audioPlayback.pause();
-      audioPlayback.src = '';
-      audioUrl = URL.createObjectURL(audioBlob);
-      audioPlayback.src = audioUrl;
-
-      playBtn.disabled = false;
-      uploadBtn.disabled = false;
-      retryBtn.disabled = true;
-      stopBtn.disabled = true;
-      startBtn.disabled = false;
-      cancelAnimationFrame(animationId);
-      canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-      clearTimeout(recordTimeout);
-    };
+    recorder = new Recorder(sourceNode);
     return true;
   } catch (err) {
-    alert('ไม่สามารถเข้าถึงไมโครโฟนได้ กรุณาอนุญาตการใช้งาน');
+    alert("ไม่สามารถเข้าถึงไมโครโฟนได้ กรุณาอนุญาตการใช้งาน");
     return false;
   }
 }
 
-playGreetingBtn.addEventListener('click', async () => {
-  greetingText.textContent = '🎧 กำลังเล่นเสียงทักทาย...';
-  playGreetingBtn.disabled = true;
-  await greetingAudio.play();
-  greetingAudio.onended = () => {
-    startBtn.disabled = false;
-    greetingText.textContent = '✅ ฟังจบแล้ว สามารถเริ่มอัดเสียงได้';
-  };
-});
+function drawVisualizer() {
+  const bufferLength = analyser.fftSize;
+  const dataArray = new Uint8Array(bufferLength);
 
-startBtn.addEventListener('click', async () => {
-  if (!groupSelect.value) return alert('กรุณาเลือกกลุ่มของคุณ');
-  if (!nameInput.value.trim()) return alert('กรุณากรอกชื่อ');
-  if (!mediaRecorder) {
+  function draw() {
+    animationId = requestAnimationFrame(draw);
+    analyser.getByteTimeDomainData(dataArray);
+    canvasCtx.fillStyle = "white";
+    canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+    canvasCtx.lineWidth = 2;
+    canvasCtx.strokeStyle = "blue";
+    canvasCtx.beginPath();
+    const sliceWidth = canvas.width / bufferLength;
+    let x = 0;
+    for (let i = 0; i < bufferLength; i++) {
+      const v = dataArray[i] / 128.0;
+      const y = (v * canvas.height) / 2;
+      i === 0 ? canvasCtx.moveTo(x, y) : canvasCtx.lineTo(x, y);
+      x += sliceWidth;
+    }
+    canvasCtx.lineTo(canvas.width, canvas.height / 2);
+    canvasCtx.stroke();
+  }
+  draw();
+}
+
+function stopRecording() {
+  recorder.stop();
+  recorder.exportWAV((blob) => {
+    audioBlob = blob;
+    audioPlayback.pause();
+    audioPlayback.src = "";
+    audioUrl = URL.createObjectURL(audioBlob);
+    audioPlayback.src = audioUrl;
+    audioPlayback.style.display = "block";
+
+    playBtn.disabled = false;
+    uploadBtn.disabled = false;
+    retryBtn.disabled = false;
+    stopBtn.disabled = true;
+    startBtn.disabled = false;
+    cancelAnimationFrame(animationId);
+    canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+    clearTimeout(recordTimeout);
+  });
+}
+
+startBtn.addEventListener("click", async () => {
+  if (!groupSelect.value) return alert("กรุณาเลือกกลุ่มของคุณ");
+  if (!nameInput.value.trim()) return alert("กรุณากรอกชื่อ");
+
+  if (!recorder) {
     const ready = await setupRecorder();
     if (!ready) return;
   }
-  greetingText.textContent = '🎙 เริ่มอัดเสียง พูดได้เลย';
+
+  greetingText.textContent = "🎙 เริ่มอัดเสียง พูดได้เลย";
   startBtn.disabled = true;
-  audioChunks = [];
-  mediaRecorder.start();
+  recorder.clear();
+  recorder.record();
   stopBtn.disabled = false;
   retryBtn.disabled = true;
   playBtn.disabled = true;
   uploadBtn.disabled = true;
   drawVisualizer();
   recordTimeout = setTimeout(() => {
-    if (mediaRecorder?.state === 'recording') {
-      mediaRecorder.stop();
-      greetingText.textContent = '⏰ หมดเวลา 4 นาที';
-    }
+    stopRecording();
+    greetingText.textContent = "⏰ หมดเวลา 4 นาที";
   }, MAX_RECORD_TIME_MS);
 });
 
-stopBtn.addEventListener('click', () => {
-  if (mediaRecorder?.state === 'recording') {
-    mediaRecorder.stop();
-    greetingText.textContent = '📍 หยุดบันทึกเสียงแล้ว';
-  }
+stopBtn.addEventListener("click", () => {
+  stopRecording();
+  greetingText.textContent = "📍 หยุดบันทึกเสียงแล้ว";
 });
 
-retryBtn.addEventListener('click', () => {
-  audioPlayback.pause();
-  audioPlayback.src = '';
+retryBtn.addEventListener("click", () => {
+  audioPlayback.src = "";
   playBtn.disabled = true;
-  uploadBtn.disabled = true;
   retryBtn.disabled = true;
-  greetingText.textContent = 'จะฮา จะซึ้ง จะร้องเพลงก็ได้ ขอแค่พูดถึงเจ้าบ่าวเจ้าสาวบ้างก็พอ 😄❤️';
-});
-
-playBtn.addEventListener('click', async () => {
-  if (audioPlayback.src) {
-    try {
-      await audioPlayback.play();
-    } catch (error) {
-      console.log('Error playing audio:', error);
-    }
-  }
-});
-
-uploadBtn.addEventListener('click', async () => {
-  if (!audioBlob || !nameInput.value.trim() || !groupSelect.value) return;
-  const formData = new FormData();
-  formData.append('audioBlob', audioBlob, 'voice.webm');
-  formData.append('name', nameInput.value.trim());
-  formData.append('group', groupSelect.value);
   uploadBtn.disabled = true;
-  greetingText.textContent = '⏳ กำลังอัปโหลด...';
+  greetingText.textContent = "🎤 พร้อมอัดใหม่";
+});
+
+playBtn.addEventListener("click", () => {
+  if (audioUrl) {
+    audioPlayback.play();
+  }
+});
+
+uploadBtn.addEventListener("click", async () => {
+  if (!audioBlob) return alert("ยังไม่มีไฟล์เสียง");
+  const formData = new FormData();
+  formData.append("audio", audioBlob, "voice.wav");
+  formData.append("name", nameInput.value.trim());
+  formData.append("group", groupSelect.value);
+
+  uploadBtn.disabled = true;
+  uploadBtn.textContent = "⏳ กำลังอัปโหลด...";
+
   try {
-    const response = await fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec', {
-      method: 'POST', body: formData
-    });
-    const text = await response.text();
-    greetingText.textContent = text.includes('success')
-      ? '✅ ขอบคุณ! อัปโหลดเสียงเรียบร้อยแล้ว'
-      : '❌ มีข้อผิดพลาดในการอัปโหลด';
+    const response = await fetch("/upload", { method: "POST", body: formData });
+    const result = await response.json();
+    if (result.success) {
+      alert("✅ อัปโหลดเรียบร้อยแล้ว");
+      greetingText.textContent = "✅ ขอบคุณที่ส่งเสียง!";
+    } else {
+      throw new Error(result.message || "เกิดข้อผิดพลาด");
+    }
   } catch (err) {
-    greetingText.textContent = '❌ เกิดข้อผิดพลาด: ' + err.message;
+    alert("❌ อัปโหลดไม่สำเร็จ: " + err.message);
+  } finally {
+    uploadBtn.disabled = false;
+    uploadBtn.textContent = "📤 ส่ง";
   }
 });
-
-function resizeCanvas() {
-  canvas.width = canvas.clientWidth * window.devicePixelRatio;
-  canvas.height = canvas.clientHeight * window.devicePixelRatio;
-}
-window.addEventListener('resize', resizeCanvas);
-window.addEventListener('load', () => resizeCanvas());
-
-// เพิ่ม listener ช่วย iOS เล่นเสียงได้ใน event interaction
-document.body.addEventListener('click', () => {
-  if (audioPlayback.src && audioPlayback.paused) {
-    audioPlayback.play().catch(() => {});
-  }
-});
-</script>
+  </script>
 </body>
 </html>
