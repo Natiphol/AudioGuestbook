@@ -40,10 +40,14 @@
     border: 1px solid #aac7e3;
     margin: 0.5rem 0;
   }
+  select {
+    background-color: #f8fbff;
+  }
   button {
     background-color: #007acc;
     color: white;
     border: none;
+    transition: background-color 0.3s;
     cursor: pointer;
   }
   button:hover:not(:disabled) {
@@ -124,7 +128,7 @@
 
 <div id="timer"></div>
 <canvas id="visualizer"></canvas>
-<audio id="audioPlayer" controls playsinline></audio>
+<audio id="audioPlayer" controls></audio>
 <div id="status"></div>
 <div id="progressRose"></div>
 
@@ -184,13 +188,24 @@ async function startRecording() {
   }
 
   audioChunks = [];
-  let mimeType = 'audio/mp4';
-  if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'audio/webm';
+  
+  // เลือก mimeType ที่รองรับโดย browser (ลองก่อน)
+  let options = { mimeType: '' };
+  if (MediaRecorder.isTypeSupported('audio/mp4')) {
+    options.mimeType = 'audio/mp4';
+  } else if (MediaRecorder.isTypeSupported('audio/aac')) {
+    options.mimeType = 'audio/aac';
+  } else if (MediaRecorder.isTypeSupported('audio/webm')) {
+    options.mimeType = 'audio/webm';
+  } else {
+    options.mimeType = '';
+  }
 
-  mediaRecorder = new MediaRecorder(stream, { mimeType });
+  mediaRecorder = new MediaRecorder(stream, options);
+
   mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
   mediaRecorder.onstop = () => {
-    audioBlob = new Blob(audioChunks, { type: mimeType });
+    audioBlob = new Blob(audioChunks, { type: options.mimeType || 'audio/mp4' });
     audioPlayer.src = URL.createObjectURL(audioBlob);
     resetBtn.disabled = false;
     uploadBtn.disabled = false;
