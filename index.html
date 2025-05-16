@@ -40,14 +40,10 @@
     border: 1px solid #aac7e3;
     margin: 0.5rem 0;
   }
-  select {
-    background-color: #f8fbff;
-  }
   button {
     background-color: #007acc;
     color: white;
     border: none;
-    transition: background-color 0.3s;
     cursor: pointer;
   }
   button:hover:not(:disabled) {
@@ -172,7 +168,7 @@ playGreetingBtn.addEventListener('click', () => {
     greetingPlayed = true;
     startBtn.disabled = false;
     statusDiv.textContent = "🎧 ฟังเสียงทักทายเสร็จแล้ว กดเริ่มอัดเสียงได้เลย";
-  };
+  }
 });
 
 async function startRecording() {
@@ -188,12 +184,14 @@ async function startRecording() {
   }
 
   audioChunks = [];
-  mediaRecorder = new MediaRecorder(stream);
+  let mimeType = 'audio/mp4';
+  if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'audio/webm';
+
+  mediaRecorder = new MediaRecorder(stream, { mimeType });
   mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
   mediaRecorder.onstop = () => {
-    audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+    audioBlob = new Blob(audioChunks, { type: mimeType });
     audioPlayer.src = URL.createObjectURL(audioBlob);
-    audioPlayer.type = 'audio/wav';
     resetBtn.disabled = false;
     uploadBtn.disabled = false;
     stopBtn.disabled = true;
@@ -201,7 +199,7 @@ async function startRecording() {
     stream.getTracks().forEach(t => t.stop());
     clearInterval(recordingTimer);
     clearVisualizer();
-  };
+  }
 
   mediaRecorder.start();
   startBtn.disabled = true;
