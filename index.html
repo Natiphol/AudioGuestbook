@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -116,8 +115,6 @@
   <h1>ฝากเสียงอวยพรเจ้าบ่าวเจ้าสาว</h1>
   <p class="description">จะฮา จะซึ้ง จะร้องเพลงก็ได้ ขอแค่พูดถึงเจ้าบ่าวเจ้าสาวบ้างก็พอ 😄❤️</p>
 
-<body>
-  <h1>ฝากเสียงอวยพรงานแต่ง</h1>
   <input type="text" id="name" placeholder="ชื่อของคุณ (เช่น ป้าแอ๊ด)" />
   <select id="group" title="เลือกกลุ่มของคุณ">
     <option value="">-- เลือกกลุ่ม --</option>
@@ -142,7 +139,7 @@
 
   <p id="msg"></p>
 
-  <script>
+  <script type="module">
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxE_TYcDqqheROL652jb8wHmg3K9IHujV6nwrXADVlYqX-RSJNfp1TfdyZdL4Zm7oODMw/exec";
 
     const startBtn = document.getElementById("start");
@@ -293,14 +290,12 @@
       }
     };
 
-    function checkInput() {
-      startBtn.disabled = !(nameInput.value.trim() && groupSelect.value);
-    }
+    nameInput.addEventListener("input", () => startBtn.disabled = !(nameInput.value.trim() && groupSelect.value));
+    groupSelect.addEventListener("change", () => startBtn.disabled = !(nameInput.value.trim() && groupSelect.value));
 
-    nameInput.addEventListener("input", checkInput);
-    groupSelect.addEventListener("change", checkInput);
-
-    resetUI();
+    window.onload = () => {
+      resetUI();
+    };
   </script>
 </body>
 </html>
