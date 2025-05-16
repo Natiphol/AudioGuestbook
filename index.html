@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -6,7 +5,134 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>ฝากเสียงอวยพรเจ้าบ่าวเจ้าสาว</title>
 <style>
-  /* [style content remains unchanged from user's file] */
+  * {
+    box-sizing: border-box;
+    margin: 0; padding: 0;
+  }
+  body {
+    font-family: 'Prompt', sans-serif, Arial, sans-serif;
+    background-color: #f0f8ff;
+    color: #003366;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px 16px 40px;
+  }
+  header {
+    max-width: 400px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  header img {
+    max-height: 150px;
+    object-fit: contain;
+  }
+  h1 {
+    font-size: 1.9rem;
+    text-align: center;
+    font-weight: 700;
+    color: #004080;
+    margin-bottom: 16px;
+    text-shadow: 1px 1px 3px rgba(0, 64, 128, 0.3);
+  }
+  .container {
+    width: 100%;
+    max-width: 420px;
+    background: #e6f0ff;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    border-radius: 16px;
+    padding: 20px 24px 24px;
+  }
+  label {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 6px;
+    display: block;
+    color: #003366;
+  }
+  select, input[type="text"] {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    border: 2px solid #aaccee;
+    margin-bottom: 20px;
+    transition: border-color 0.3s ease;
+    outline-offset: 2px;
+    outline-color: #cce7ff;
+  }
+  select:focus, input[type="text"]:focus {
+    border-color: #004080;
+  }
+  .greeting {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    color: #004080;
+    text-align: center;
+    min-height: 24px;
+  }
+  canvas {
+    width: 100%;
+    height: 60px;
+    background-color: #cce7ff;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  .buttons-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+  button {
+    cursor: pointer;
+    background-color: #004080;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 20px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    min-width: 110px;
+    box-shadow: 0 5px 12px rgba(0, 64, 128, 0.3);
+    transition: background-color 0.3s ease, transform 0.1s ease;
+  }
+  button:hover:not(:disabled) {
+    background-color: #002050;
+    transform: scale(1.05);
+  }
+  button:disabled {
+    background-color: #aaccee;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  button:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+  audio.audio-player {
+    width: 100%;
+    margin-top: 12px;
+    border-radius: 12px;
+    outline-offset: 2px;
+    outline-color: #004080;
+    box-shadow: 0 2px 10px rgba(0, 64, 128, 0.2);
+  }
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 1.4rem;
+    }
+    button {
+      padding: 12px 16px;
+      font-size: 1rem;
+      min-width: 90px;
+    }
+    canvas {
+      height: 50px;
+    }
+  }
 </style>
 </head>
 <body>
@@ -37,7 +163,7 @@
     <button id="playBtn" disabled>▶ ฟัง</button>
     <button id="uploadBtn" disabled>📤 แชร์ / อัปโหลด</button>
   </div>
-  <audio id="audioPlayback" class="audio-player" controls playsinline></audio>
+  <audio id="audioPlayback" class="audio-player" controls></audio>
 </div>
 <script>
 const playGreetingBtn = document.getElementById('playGreetingBtn');
@@ -64,6 +190,7 @@ function drawVisualizer() {
   const HEIGHT = canvas.height;
   const bufferLength = analyser.fftSize;
   const dataArray = new Uint8Array(bufferLength);
+
   canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
   analyser.getByteTimeDomainData(dataArray);
   canvasCtx.lineWidth = 3;
@@ -95,10 +222,15 @@ async function setupRecorder() {
     mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
     mediaRecorder.onstop = () => {
       audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+
+      // แก้ไขสำหรับ iOS: รีเซ็ต src ก่อนเซ็ตใหม่
       audioPlayback.pause();
-      audioPlayback.src = '';
+      audioPlayback.removeAttribute('src'); // ลบ src เก่า
+      audioPlayback.load(); // รีเซ็ต audio element
+
       audioUrl = URL.createObjectURL(audioBlob);
       audioPlayback.src = audioUrl;
+
       playBtn.disabled = false;
       uploadBtn.disabled = false;
       retryBtn.disabled = true;
@@ -158,7 +290,9 @@ stopBtn.addEventListener('click', () => {
 
 retryBtn.addEventListener('click', () => {
   audioPlayback.pause();
-  audioPlayback.src = '';
+  audioPlayback.removeAttribute('src');
+  audioPlayback.load();
+
   playBtn.disabled = true;
   uploadBtn.disabled = true;
   retryBtn.disabled = true;
@@ -168,10 +302,19 @@ retryBtn.addEventListener('click', () => {
 playBtn.addEventListener('click', async () => {
   if (audioPlayback.src) {
     try {
-      audioPlayback.load(); // 🔧 iOS fix
       await audioPlayback.play();
     } catch (error) {
       console.log('Error playing audio:', error);
+    }
+  }
+});
+// เพิ่ม touchend สำหรับ iOS
+playBtn.addEventListener('touchend', async () => {
+  if (audioPlayback.src && audioPlayback.paused) {
+    try {
+      await audioPlayback.play();
+    } catch (error) {
+      console.log('Error playing audio on touchend:', error);
     }
   }
 });
