@@ -4,7 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ฝากเสียงอวยพรงานแต่ง</title>
+  <!-- ฟอนต์ Pacifico + Poppins -->
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <!-- Ionicons -->
   <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
   <style>
@@ -19,7 +21,8 @@
     }
     * { box-sizing: border-box; margin:0; padding:0 }
     html, body {
-      background: var(--bg); color: var(--text);
+      background: var(--bg);
+      color: var(--text);
       font-family: 'Poppins', sans-serif;
       max-width: 480px; margin:0 auto;
       min-height: 100vh;
@@ -40,14 +43,14 @@
       box-shadow: var(--shadow); margin:1rem; padding:1.5rem;
       text-align: center;
     }
-    .card .logo {
+    .logo {
       width:100px; margin-bottom:1rem; border-radius:50%;
     }
     .card h1 {
       font-family: 'Pacifico', cursive; font-size:2rem;
       margin-bottom:.5rem;
     }
-    .card .subtitle {
+    .subtitle {
       font-size:.95rem; color:#444; margin-bottom:1.5rem;
     }
     .card input, .card select {
@@ -79,7 +82,12 @@
       border-radius:var(--radius); background: var(--input-bg);
       box-shadow: inset 0 2px 6px rgba(0,0,0,0.05);
     }
-    audio { width:100%; margin-top:.75rem; }
+    audio {
+      width:100%; margin-top:.75rem;
+      /* iOS inline playback */
+      -webkit-playsinline: true;
+      playsinline: true;
+    }
     #progressRose {
       width:36px; height:36px; margin:1rem auto;
       background:url('https://i.imgur.com/n0DtfkQ.jpg') center/cover;
@@ -127,7 +135,7 @@
   </header>
 
   <div class="card">
-    <img src="https://i.imgur.com/n0DtfkQ.jpg" alt="โลโก้งานแต่ง" class="logo"/>
+    <img src="https://i.imgur.com/n0DtfkQ.jpg" class="logo" alt="Logo"/>
     <h1>ฝากเสียงอวยพร</h1>
     <div class="subtitle">
       จะฮา จะซึ้ง จะร้องเพลง ก็ได้ ขอแค่พูดถึง เจ้าบ่าวเจ้าสาวบ้าง 😄❤️
@@ -153,7 +161,7 @@
 
     <div id="timer"></div>
     <canvas id="visualizer"></canvas>
-    <audio id="audioPlayer" controls></audio>
+    <audio id="audioPlayer" controls playsinline webkit-playsinline></audio>
     <div id="status"></div>
     <div id="progressRose"></div>
 
@@ -201,17 +209,18 @@
     let audioContext, analyser, sourceNode, animId;
     let timerInterval, elapsed = 0, greetingPlayed = false;
 
+    // เล่นเสียงทักทายจนจบแล้วปลดล็อกปุ่มเริ่มอัด
     playGreetingBtn.addEventListener('click', () => {
       if (greetingPlayed) return;
-      const audio = new Audio('https://natiphol.github.io/33/Test.mp3');
+      const greeting = new Audio('https://natiphol.github.io/33/Test.mp3');
       playGreetingBtn.disabled = true;
       statusDiv.textContent = '🎧 กำลังเล่นเสียงทักทาย...';
-      audio.play().catch(()=>{});
-      audio.onended = () => {
+      greeting.play().catch(()=>{});
+      greeting.addEventListener('ended', () => {
         greetingPlayed = true;
         startBtn.disabled = false;
         statusDiv.textContent = '🎧 ฟังทักทายเสร็จแล้ว กด “เริ่มอัด” ได้เลย';
-      };
+      });
     });
 
     async function startRecording() {
@@ -247,6 +256,8 @@
     function onStop() {
       audioBlob = new Blob(audioChunks);
       audioPlayer.src = URL.createObjectURL(audioBlob);
+      // สำหรับ iOS ให้โหลดใหม่
+      audioPlayer.load();
       resetBtn.disabled=false; uploadBtn.disabled=false; stopBtn.disabled=true;
       clearInterval(timerInterval);
       clearVisualizer();
@@ -307,7 +318,7 @@
         ctx.fillStyle='rgba(255,255,255,0.8)';
         ctx.fillRect(0,0,canvas.width,canvas.height);
         ctx.lineWidth=2;
-        ctx.strokeStyle=window.getComputedStyle(document.documentElement).getPropertyValue('--blue').trim();
+        ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--blue').trim();
         ctx.beginPath();
         let x=0, slice=canvas.width/arr.length;
         arr.forEach((v,i)=>{
