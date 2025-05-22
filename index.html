@@ -176,32 +176,32 @@
     <button id="nav-home">🏠</button>
     <button id="nav-search">🔍</button>
     <button id="nav-add" class="primary">＋</button>
-    <button id="nav-heart">❤️</button>
+    <button id="nav-letter">✉️</button>
     <button id="nav-profile"><ion-icon name="mic-outline"></ion-icon></button>
   </nav>
 
   <script>
     // Bottom nav links
-    document.getElementById('nav-home').onclick = () => {
-      window.location.href = 'https://natiphol22.github.io/WishesGallery/';
-    };
-    document.getElementById('nav-search').onclick = () => {
-      window.location.href = 'https://natiphol.github.io/2/';
-    };
+    document.getElementById('nav-home').onclick   = () => window.location.href = 'https://natiphol22.github.io/WishesGallery/';
+    document.getElementById('nav-search').onclick = () => window.location.href = 'https://natiphol.github.io/2/';
+    document.getElementById('nav-add').onclick    = () => window.location.href = 'https://natiphol22.github.io/WishesGallery/add.html';
+    document.getElementById('nav-letter').onclick = () => window.location.href = 'https://natiphol22.github.io/Text/';
+    document.getElementById('nav-profile').onclick= () => window.location.href = 'https://natiphol.github.io/AudioGuestbook/';
 
-    const nameInput       = document.getElementById('name');
-    const groupSelect     = document.getElementById('group');
-    const playBtn         = document.getElementById('playGreetingBtn');
-    const startBtn        = document.getElementById('startBtn');
-    const stopBtn         = document.getElementById('stopBtn');
-    const resetBtn        = document.getElementById('resetBtn');
-    const uploadBtn       = document.getElementById('uploadBtn');
-    const audioPlayer     = document.getElementById('audioPlayer');
-    const statusDiv       = document.getElementById('status');
-    const timerDiv        = document.getElementById('timer');
-    const progressRose    = document.getElementById('progressRose');
-    const canvas          = document.getElementById('visualizer');
-    const ctx             = canvas.getContext('2d');
+    // Recording UI logic
+    const nameInput    = document.getElementById('name');
+    const groupSelect  = document.getElementById('group');
+    const playBtn      = document.getElementById('playGreetingBtn');
+    const startBtn     = document.getElementById('startBtn');
+    const stopBtn      = document.getElementById('stopBtn');
+    const resetBtn     = document.getElementById('resetBtn');
+    const uploadBtn    = document.getElementById('uploadBtn');
+    const audioPlayer  = document.getElementById('audioPlayer');
+    const statusDiv    = document.getElementById('status');
+    const timerDiv     = document.getElementById('timer');
+    const progressRose = document.getElementById('progressRose');
+    const canvas       = document.getElementById('visualizer');
+    const ctx          = canvas.getContext('2d');
 
     function resizeCanvas() {
       canvas.width = canvas.clientWidth;
@@ -217,7 +217,7 @@
 
     let stream, recorder, audioChunks = [], audioBlob;
     let audioContext, analyser, sourceNode, animId;
-    let timerInterval, elapsed=0, greetingPlayed=false;
+    let timerInterval, elapsed = 0, greetingPlayed = false;
 
     playBtn.addEventListener('click', () => {
       if (greetingPlayed) return;
@@ -233,22 +233,17 @@
     });
 
     async function startRecording() {
-      if (!nameInput.value.trim()) {
-        return alert('กรุณากรอกชื่อของคุณ');
-      }
-      if (!/^[A-Za-z\s]+$/.test(nameInput.value.trim())) {
-        return alert('ชื่อใช้ได้เฉพาะ A–Z และ space เท่านั้น');
-      }
-      if (!groupSelect.value) {
-        return alert('กรุณาเลือกกลุ่มของคุณ');
-      }
+      if (!nameInput.value.trim()) return alert('กรุณากรอกชื่อของคุณ');
+      if (!/^[A-Za-z\s]+$/.test(nameInput.value.trim())) return alert('ชื่อใช้ได้เฉพาะ A–Z และ space เท่านั้น');
+      if (!groupSelect.value) return alert('กรุณาเลือกกลุ่มของคุณ');
+
       try {
-        stream = await navigator.mediaDevices.getUserMedia({ audio:true });
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       } catch {
         return alert('⚠️ ไม่สามารถเข้าถึงไมโครโฟนได้');
       }
 
-      let options = {};
+      const options = {};
       if (MediaRecorder.isTypeSupported('audio/mp4')) {
         options.mimeType = 'audio/mp4';
       } else if (MediaRecorder.isTypeSupported('audio/webm')) {
@@ -263,106 +258,112 @@
         audioPlayer.src = URL.createObjectURL(audioBlob);
         audioPlayer.load();
         audioPlayer.play().catch(()=>{});
-        resetBtn.disabled=false;
-        uploadBtn.disabled=false;
-        stopBtn.disabled=true;
+        resetBtn.disabled = false;
+        uploadBtn.disabled = false;
+        stopBtn.disabled = true;
         clearInterval(timerInterval);
         clearVisualizer();
-        stream.getTracks().forEach(t=>t.stop());
+        stream.getTracks().forEach(t => t.stop());
       };
       recorder.start();
 
       startBtn.disabled = true;
       stopBtn.disabled = false;
       statusDiv.textContent = '🎙️ กำลังอัดเสียง...';
-      elapsed=0;
-      timerDiv.textContent='00:00';
-      timerInterval = setInterval(()=>{
+      elapsed = 0;
+      timerDiv.textContent = '00:00';
+      timerInterval = setInterval(() => {
         elapsed++;
-        const m=String(Math.floor(elapsed/60)).padStart(2,'0');
-        const s=String(elapsed%60).padStart(2,'0');
-        timerDiv.textContent=`⏱️ เวลาอัดเสียง: ${m}:${s}`;
-        if(elapsed>=180) stopRecording();
-      },1000);
+        const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+        const s = String(elapsed % 60).padStart(2, '0');
+        timerDiv.textContent = `⏱️ เวลาอัดเสียง: ${m}:${s}`;
+        if (elapsed >= 180) stopRecording();
+      }, 1000);
 
       startVisualizer();
     }
 
     function stopRecording() {
-      if(recorder?.state==='recording') recorder.stop();
+      if (recorder?.state === 'recording') recorder.stop();
     }
 
     function resetRecording() {
-      if(!confirm('อัดใหม่หรือไม่?')) return;
-      audioChunks=[]; audioBlob=null;
-      audioPlayer.src=''; statusDiv.textContent='';
-      startBtn.disabled=false; stopBtn.disabled=true;
-      resetBtn.disabled=true; uploadBtn.disabled=true;
-      timerDiv.textContent=''; clearVisualizer();
+      if (!confirm('อัดใหม่หรือไม่?')) return;
+      audioChunks = [];
+      audioBlob = null;
+      audioPlayer.src = '';
+      statusDiv.textContent = '';
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+      resetBtn.disabled = true;
+      uploadBtn.disabled = true;
+      timerDiv.textContent = '';
+      clearVisualizer();
     }
 
     async function uploadAudio() {
-      if(!audioBlob) return alert('ยังไม่มีไฟล์เสียง');
-      statusDiv.textContent='⏳ กำลังอัปโหลด...';
-      uploadBtn.disabled=true; progressRose.style.display='block';
-      const reader=new FileReader();
-      reader.onloadend=async()=>{
-        const b64=reader.result.split(',')[1];
+      if (!audioBlob) return alert('ยังไม่มีไฟล์เสียง');
+      statusDiv.textContent = '⏳ กำลังอัปโหลด...';
+      uploadBtn.disabled = true;
+      progressRose.style.display = 'block';
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const b64 = reader.result.split(',')[1];
         try {
-          const res=await fetch(
+          const res = await fetch(
             'https://script.google.com/macros/s/AKfycbxE_TYcDqqheROL652jb8wHmg3K9IHujV6nwrXADVlYqX-RSJNfp1TfdyZdL4Zm7oODMw/exec',
             {
-              method:'POST',
-              headers:{'Content-Type':'application/x-www-form-urlencoded'},
-              body:new URLSearchParams({
-                name:nameInput.value.trim(),
-                group:groupSelect.value,
-                audio:b64
+              method: 'POST',
+              headers: { 'Content-Type':'application/x-www-form-urlencoded' },
+              body: new URLSearchParams({
+                name: nameInput.value.trim(),
+                group: groupSelect.value,
+                audio: b64
               })
             }
           );
-          const result=await res.json();
-          if(result.success) {
-            statusDiv.innerHTML=`✅ อัปโหลดสำเร็จ!<br>
+          const result = await res.json();
+          if (result.success) {
+            statusDiv.innerHTML = `✅ อัปโหลดสำเร็จ!<br>
               <a href="${result.url}" target="_blank">เปิดไฟล์เสียง</a>`;
-          } else throw new Error(result.message||'ล้มเหลว');
+          } else throw new Error(result.message || 'ล้มเหลว');
         } catch(e) {
-          statusDiv.textContent='❌ อัปโหลดล้มเหลว: '+e.message;
+          statusDiv.textContent = '❌ อัปโหลดล้มเหลว: ' + e.message;
         } finally {
-          progressRose.style.display='none';
-          uploadBtn.disabled=false;
+          progressRose.style.display = 'none';
+          uploadBtn.disabled = false;
         }
       };
       reader.readAsDataURL(audioBlob);
     }
 
     function startVisualizer() {
-      audioContext=new (window.AudioContext||window.webkitAudioContext)();
-      analyser=audioContext.createAnalyser();
-      sourceNode=audioContext.createMediaStreamSource(stream);
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioContext.createAnalyser();
+      sourceNode = audioContext.createMediaStreamSource(stream);
       sourceNode.connect(analyser);
-      analyser.fftSize=2048;
-      const data=new Uint8Array(analyser.fftSize);
+      analyser.fftSize = 2048;
+      const data = new Uint8Array(analyser.fftSize);
       function draw() {
-        animId=requestAnimationFrame(draw);
+        animId = requestAnimationFrame(draw);
         analyser.getByteTimeDomainData(data);
-        ctx.fillStyle='rgba(255,255,255,0.8)';
+        ctx.fillStyle = 'rgba(255,255,255,0.8)';
         ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.lineWidth=2;
-        ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--blue').trim();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#405de6';
         ctx.beginPath();
-        let x=0, slice=canvas.width/data.length;
-        data.forEach((v,i)=>{
-          const y=(v/128)*(canvas.height/2);
-          i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-          x+=slice;
+        let x = 0, slice = canvas.width / data.length;
+        data.forEach((v,i) => {
+          const y = (v/128) * (canvas.height/2);
+          i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+          x += slice;
         });
         ctx.stroke();
       }
       draw();
     }
 
-    function clearVisualizer(){
+    function clearVisualizer() {
       cancelAnimationFrame(animId);
       ctx.clearRect(0,0,canvas.width,canvas.height);
     }
@@ -372,5 +373,6 @@
     resetBtn.addEventListener('click', resetRecording);
     uploadBtn.addEventListener('click', uploadAudio);
   </script>
+
 </body>
 </html>
