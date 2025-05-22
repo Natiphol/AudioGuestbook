@@ -2,11 +2,9 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tuck &amp; Tan</title>
-  <!-- ฟอนต์ Pacifico + Poppins -->
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <!-- Ionicons -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ฝากเสียงอวยพรงานแต่ง</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
   <style>
@@ -17,181 +15,101 @@
       --radius: 12px;
       --shadow: 0 8px 24px rgba(0,0,0,0.1);
       --nav-height: 60px;
-      --blue: #405de6;
+      --primary-grad: linear-gradient(135deg,#405de6,#5851db);
     }
     * { box-sizing: border-box; margin:0; padding:0 }
     html, body {
-      background: var(--bg);
-      color: var(--text);
+      background: var(--bg); color: var(--text);
       font-family: 'Poppins', sans-serif;
-      max-width: 480px;
-      margin: 0 auto;
+      max-width: 480px; margin:0 auto;
       min-height: 100vh;
       padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
     }
     header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem;
-      background: #fff;
-      box-shadow: var(--shadow);
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem; background: #fff; box-shadow: var(--shadow);
     }
     header h1 {
-      font-family: 'Pacifico', cursive;
-      font-size: 1.8rem;
-      cursor: default;
+      font-family: 'Pacifico', cursive; font-size: 1.8rem; cursor: default;
     }
     header .top-heart svg {
-      width: 28px;
-      height: 28px;
-      fill: #e0245e;
+      width:28px; height:28px; fill:#e0245e;
     }
-
-    .container { padding: 1rem; }
     .card {
-      background: #fff;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 1rem;
-      margin-bottom: 1rem;
-    }
-    .card h2 {
-      font-family: 'Pacifico', cursive;
-      font-size: 1.5rem;
-      margin-bottom: .5rem;
+      background: #fff; border-radius: var(--radius);
+      box-shadow: var(--shadow); margin:1rem; padding:1.5rem;
       text-align: center;
+    }
+    .card .logo {
+      width:100px; margin-bottom:1rem; border-radius:50%;
+    }
+    .card h1 {
+      font-family: 'Pacifico', cursive; font-size:2rem;
+      margin-bottom:.5rem;
     }
     .card .subtitle {
-      text-align: center;
-      color: #444;
-      margin-bottom: 1rem;
-      font-size: .95rem;
+      font-size:.95rem; color:#444; margin-bottom:1.5rem;
     }
-
-    .form-group { margin-bottom: 1rem; }
-    .form-group label {
-      display: block;
-      margin-bottom: .3rem;
-      font-weight: 500;
+    .card input, .card select {
+      width:100%; padding:.75rem; margin-bottom:1rem;
+      border:1px solid #ddd; border-radius:var(--radius);
+      background: var(--input-bg); font-size:.95rem;
     }
-    .form-group input,
-    .form-group select {
-      width: 100%;
-      padding: .75rem;
-      border: 1px solid #ddd;
-      border-radius: var(--radius);
-      background: var(--input-bg);
-      font-size: .95rem;
+    .card input:focus, .card select:focus {
+      outline:none; box-shadow: 0 0 0 2px rgba(64,93,230,0.3);
     }
-    .form-group button {
-      width: 100%;
-      padding: .75rem;
-      border: none;
-      border-radius: var(--radius);
-      background: var(--blue);
-      color: #fff;
-      font-size: .95rem;
-      cursor: pointer;
-      box-shadow: var(--shadow);
-      transition: transform .2s;
+    .card button {
+      width:100%; padding:.8rem 0; margin-top:.5rem;
+      border:none; border-radius:var(--radius);
+      background: var(--primary-grad); color:#fff;
+      font-size:.95rem; cursor:pointer; box-shadow:var(--shadow);
+      transition:transform .2s;
     }
-    .form-group button:hover {
-      transform: translateY(-2px);
-    }
-    .form-group button:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
-
+    .card button:hover:not(:disabled) { transform:translateY(-2px); }
+    .card button:disabled { background:#ccc; cursor:not-allowed; }
     #buttonsContainer {
-      display: flex;
-      gap: .5rem;
-      margin-bottom: 1rem;
+      display:flex; gap:.5rem; margin-bottom:1rem;
     }
-    #buttonsContainer button {
-      flex: 1;
+    #buttonsContainer button { flex:1; }
+    #timer, #status {
+      font-size:.9rem; margin-top:.75rem; font-weight:500;
     }
-
-    #timer {
-      font-size: .9rem;
-      font-weight: 500;
-      margin-bottom: 1rem;
-      text-align: center;
-    }
-
     canvas#visualizer {
-      width: 100%;
-      height: 60px;
-      background: var(--input-bg);
-      border-radius: var(--radius);
+      width:100%; height:60px; margin-top:.75rem;
+      border-radius:var(--radius); background: var(--input-bg);
       box-shadow: inset 0 2px 6px rgba(0,0,0,0.05);
-      margin-bottom: 1rem;
     }
-
-    audio {
-      width: 100%;
-      margin-bottom: 1rem;
-    }
-
-    #status {
-      font-size: .9rem;
-      margin-bottom: 1rem;
-      text-align: center;
-    }
+    audio { width:100%; margin-top:.75rem; }
     #progressRose {
-      width: 36px; height: 36px;
-      margin: 0 auto 1rem;
-      background: url('https://i.imgur.com/n0DtfkQ.jpg') center/cover;
-      border-radius: 50%;
-      display: none;
-      animation: spin 1.5s linear infinite;
+      width:36px; height:36px; margin:1rem auto;
+      background:url('https://i.imgur.com/n0DtfkQ.jpg') center/cover;
+      border-radius:50%; display:none; animation:spin 1.5s linear infinite;
     }
-
     .back-button {
-      display: block;
-      text-align: center;
-      margin: 1rem auto 0;
-      color: var(--text);
-      text-decoration: none;
-      font-weight: 500;
+      display:inline-flex; align-items:center; gap:.5rem;
+      margin-top:1rem; color:var(--text); text-decoration:none; font-weight:500;
     }
-
+    .back-button ion-icon { font-size:1.2rem; }
     .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      height: var(--nav-height);
-      background: #ffffffdd;
-      backdrop-filter: blur(12px);
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+      position:fixed; bottom:0; left:50%;
+      transform:translateX(-50%);
+      width:100%; height:var(--nav-height);
+      background:#ffffffdd; backdrop-filter:blur(12px);
+      display:flex; justify-content:space-around; align-items:center;
+      box-shadow:0 -2px 8px rgba(0,0,0,0.05);
     }
     .bottom-nav button {
-      background: none;
-      border: none;
-      font-size: 1.6rem;
-      cursor: pointer;
-      transition: transform .2s;
+      background:none; border:none; font-size:1.6rem; cursor:pointer;
+      transition:transform .2s;
     }
     .bottom-nav .primary {
-      font-size: 2rem;
-      width: 48px; height: 48px;
-      background: var(--blue);
-      color: #fff;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: var(--shadow);
+      font-size:2rem; width:48px; height:48px;
+      background:var(--primary-grad); color:#fff; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      box-shadow:var(--shadow);
     }
-    .bottom-nav button:hover { transform: scale(1.1); }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .bottom-nav button:hover { transform:scale(1.1); }
+    @keyframes spin { to{transform:rotate(360deg);} }
   </style>
 </head>
 <body>
@@ -199,61 +117,49 @@
   <header>
     <h1>Tuck &amp; Tan</h1>
     <span class="top-heart">
-      <svg viewBox="0 0 24 24">
-        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.50
-                 2 5.42 4.42 3 7.50 3c1.74 0 3.41.81 4.50 2.09
-                 C13.09 3.81 14.76 3 16.50 3 19.58 3 22.00 5.42
-                 22.00 8.50c0 3.78-3.40 6.86-8.55 11.54L12 21.35z"
-              fill="#e0245e"/>
-      </svg>
+      <svg viewBox="0 0 24 24"><path d="
+        M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.50
+        2 5.42 4.42 3 7.50 3c1.74 0 3.41.81 4.50 2.09
+        C13.09 3.81 14.76 3 16.50 3 19.58 3 22.00 5.42
+        22.00 8.50c0 3.78-3.40 6.86-8.55 11.54L12 21.35z"
+        fill="#e0245e"/></svg>
     </span>
   </header>
 
-  <div class="container">
-    <div class="card">
-      <h2>ฝากเสียงของคุณ</h2>
-      <div class="subtitle">บันทึกข้อความหรือเพลงให้เจ้าบ่าวเจ้าสาว</div>
-
-      <div class="form-group">
-        <label for="name">ชื่อของคุณ (อังกฤษเท่านั้น)</label>
-        <input type="text" id="name" placeholder="เช่น John Doe">
-      </div>
-      <div class="form-group">
-        <label for="group">กลุ่มของคุณ</label>
-        <select id="group">
-          <option value="">-- เลือกกลุ่ม --</option>
-          <option value="groom_family">ครอบครัวเจ้าบ่าว</option>
-          <option value="bride_family">ครอบครัวเจ้าสาว</option>
-          <option value="groom_friends">เพื่อนเจ้าบ่าว</option>
-          <option value="bride_friends">เพื่อนเจ้าสาว</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <button id="playGreetingBtn" disabled>▶️ ฟังเสียงทักทาย</button>
-      </div>
-      <div id="status"></div>
-
-      <div id="buttonsContainer">
-        <button id="startBtn" disabled>🎤 เริ่มอัด</button>
-        <button id="stopBtn" disabled>⏹ หยุดอัด</button>
-      </div>
-      <div class="form-group">
-        <button id="resetBtn" disabled>🔁 อัดใหม่</button>
-      </div>
-      <div class="form-group">
-        <button id="uploadBtn" disabled>📤 อัปโหลด</button>
-      </div>
-
-      <div id="timer"></div>
-      <canvas id="visualizer"></canvas>
-      <audio id="audioPlayer" controls></audio>
-      <div id="progressRose"></div>
-
-      <a href="https://natiphol.github.io/OnlineWeddingInvitation/" class="back-button">
-        ← กลับสู่การ์ดเชิญออนไลน์
-      </a>
+  <div class="card">
+    <img src="https://i.imgur.com/n0DtfkQ.jpg" alt="โลโก้งานแต่ง" class="logo"/>
+    <h1>ฝากเสียงอวยพร</h1>
+    <div class="subtitle">
+      จะฮา จะซึ้ง จะร้องเพลง ก็ได้ ขอแค่พูดถึง เจ้าบ่าวเจ้าสาวบ้าง 😄❤️
     </div>
+
+    <input type="text" id="name" placeholder="ชื่อของคุณ (อังกฤษเท่านั้น)" />
+    <select id="group">
+      <option value="">-- เลือกกลุ่ม --</option>
+      <option value="groom_family">ครอบครัวเจ้าบ่าว</option>
+      <option value="bride_family">ครอบครัวเจ้าสาว</option>
+      <option value="groom_friends">เพื่อนเจ้าบ่าว</option>
+      <option value="bride_friends">เพื่อนเจ้าสาว</option>
+    </select>
+
+    <button id="playGreetingBtn" disabled>▶️ ฟังเสียงทักทาย</button>
+
+    <div id="buttonsContainer">
+      <button id="startBtn" disabled>🎤 เริ่มอัดเสียง</button>
+      <button id="stopBtn" disabled>⏹️ หยุดอัดเสียง</button>
+    </div>
+    <button id="resetBtn" disabled>🔁 อัดใหม่</button>
+    <button id="uploadBtn" disabled>📤 อัปโหลด</button>
+
+    <div id="timer"></div>
+    <canvas id="visualizer"></canvas>
+    <audio id="audioPlayer" controls></audio>
+    <div id="status"></div>
+    <div id="progressRose"></div>
+
+    <a href="https://natiphol.github.io/OnlineWeddingInvitation/" class="back-button">
+      <ion-icon name="arrow-back-outline"></ion-icon> กลับ
+    </a>
   </div>
 
   <nav class="bottom-nav">
@@ -265,19 +171,19 @@
   </nav>
 
   <script>
-    const nameInput        = document.getElementById('name');
-    const groupSelect      = document.getElementById('group');
-    const playGreetingBtn  = document.getElementById('playGreetingBtn');
-    const startBtn         = document.getElementById('startBtn');
-    const stopBtn          = document.getElementById('stopBtn');
-    const resetBtn         = document.getElementById('resetBtn');
-    const uploadBtn        = document.getElementById('uploadBtn');
-    const audioPlayer      = document.getElementById('audioPlayer');
-    const statusDiv        = document.getElementById('status');
-    const timerDiv         = document.getElementById('timer');
-    const progressRose     = document.getElementById('progressRose');
-    const canvas           = document.getElementById('visualizer');
-    const ctx              = canvas.getContext('2d');
+    const nameInput       = document.getElementById('name');
+    const groupSelect     = document.getElementById('group');
+    const playGreetingBtn = document.getElementById('playGreetingBtn');
+    const startBtn        = document.getElementById('startBtn');
+    const stopBtn         = document.getElementById('stopBtn');
+    const resetBtn        = document.getElementById('resetBtn');
+    const uploadBtn       = document.getElementById('uploadBtn');
+    const audioPlayer     = document.getElementById('audioPlayer');
+    const statusDiv       = document.getElementById('status');
+    const timerDiv        = document.getElementById('timer');
+    const progressRose    = document.getElementById('progressRose');
+    const canvas          = document.getElementById('visualizer');
+    const ctx             = canvas.getContext('2d');
 
     function resizeCanvas() {
       canvas.width  = canvas.clientWidth;
@@ -293,14 +199,19 @@
 
     let stream, mediaRecorder, audioChunks = [], audioBlob;
     let audioContext, analyser, sourceNode, animId;
-    let timerInterval, elapsed=0, greetingPlayed=false;
+    let timerInterval, elapsed = 0, greetingPlayed = false;
 
     playGreetingBtn.addEventListener('click', () => {
       if (greetingPlayed) return;
-      new Audio('https://natiphol.github.io/33/Test.mp3').play().catch(()=>{});
-      greetingPlayed = true;
-      startBtn.disabled = false;
-      statusDiv.textContent = '🎧 ฟังทักทายเสร็จ กด “เริ่มอัด” ได้เลย';
+      const audio = new Audio('https://natiphol.github.io/33/Test.mp3');
+      playGreetingBtn.disabled = true;
+      statusDiv.textContent = '🎧 กำลังเล่นเสียงทักทาย...';
+      audio.play().catch(()=>{});
+      audio.onended = () => {
+        greetingPlayed = true;
+        startBtn.disabled = false;
+        statusDiv.textContent = '🎧 ฟังทักทายเสร็จแล้ว กด “เริ่มอัด” ได้เลย';
+      };
     });
 
     async function startRecording() {
@@ -320,19 +231,18 @@
       startBtn.disabled=true; stopBtn.disabled=false;
       statusDiv.textContent='🎙️ กำลังอัด...';
       elapsed=0; timerDiv.textContent='00:00';
-      timerInterval = setInterval(()=>{ 
+      timerInterval = setInterval(()=>{
         elapsed++;
         const m=String(Math.floor(elapsed/60)).padStart(2,'0');
         const s=String(elapsed%60).padStart(2,'0');
-        timerDiv.textContent=`${m}:${s}`;
-        if (elapsed>=180) stopRecording();
+        timerDiv.textContent=`⏱️ เวลาอัดเสียง: ${m}:${s}`;
+        if(elapsed>=180) stopRecording();
       },1000);
       startVisualizer();
     }
+
     function stopRecording() {
-      if (mediaRecorder && mediaRecorder.state==='recording') {
-        mediaRecorder.stop();
-      }
+      if(mediaRecorder?.state==='recording') mediaRecorder.stop();
     }
     function onStop() {
       audioBlob = new Blob(audioChunks);
@@ -343,76 +253,64 @@
       stream.getTracks().forEach(t=>t.stop());
     }
     function resetRecording() {
-      if (!confirm('อัดใหม่หรือไม่?')) return;
+      if(!confirm('อัดใหม่หรือไม่?')) return;
       audioChunks=[]; audioBlob=null;
       audioPlayer.src=''; resetBtn.disabled=true; uploadBtn.disabled=true;
       startBtn.disabled=false; stopBtn.disabled=true;
       timerDiv.textContent=''; statusDiv.textContent='';
       clearVisualizer();
     }
-
-    function uploadAudio() {
-      if (!audioBlob) return alert('ยังไม่มีไฟล์เสียง');
-      statusDiv.textContent = '⏳ กำลังอัปโหลด...';
-      uploadBtn.disabled = true;
-      progressRose.style.display = 'block';
-
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const base64 = reader.result.split(',')[1];
+    async function uploadAudio() {
+      if(!audioBlob) return alert('ยังไม่มีไฟล์เสียง');
+      statusDiv.textContent='⏳ กำลังอัปโหลด...';
+      uploadBtn.disabled=true; progressRose.style.display='block';
+      const reader=new FileReader();
+      reader.onloadend=async()=>{
+        const b64=reader.result.split(',')[1];
         try {
-          const res = await fetch(
+          const res=await fetch(
             'https://script.google.com/macros/s/AKfycbxE_TYcDqqheROL652jb8wHmg3K9IHujV6nwrXADVlYqX-RSJNfp1TfdyZdL4Zm7oODMw/exec',
-            {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-              body: new URLSearchParams({
-                name: nameInput.value.trim(),
-                group: groupSelect.value,
-                audio: base64
+            { method:'POST',
+              headers:{'Content-Type':'application/x-www-form-urlencoded'},
+              body:new URLSearchParams({
+                name:nameInput.value.trim(),
+                group:groupSelect.value,
+                audio:b64
               })
             }
           );
-          console.log('Fetch status:', res.status, res.statusText);
-          const text = await res.text();
-          console.log('Response body:', text);
-
-          if (!res.ok) throw new Error(`HTTP ${res.status}: ${text}`);
-          const result = JSON.parse(text);
-          if (result.success) {
-            statusDiv.innerHTML = `✅ อัปโหลดสำเร็จ!<br><a href="${result.url}" target="_blank">เปิดไฟล์เสียง</a>`;
-          } else {
-            throw new Error(result.message || 'Unknown error');
-          }
-        } catch (err) {
-          console.error('Upload failed:', err);
-          alert(`อัปโหลดล้มเหลว: ${err.message}`);
-          statusDiv.textContent = `❌ ล้มเหลว: ${err.message}`;
+          const result=await res.json();
+          if(result.success) {
+            statusDiv.innerHTML=`✅ อัปโหลดสำเร็จ!<br>
+              <a href="${result.url}" target="_blank">เปิดไฟล์เสียง</a>`;
+          } else throw new Error(result.message||'ล้มเหลว');
+        } catch(e) {
+          statusDiv.textContent='❌ อัปโหลดล้มเหลว: '+e.message;
         } finally {
-          uploadBtn.disabled = false;
-          progressRose.style.display = 'none';
+          progressRose.style.display='none';
+          uploadBtn.disabled=false;
         }
       };
       reader.readAsDataURL(audioBlob);
     }
 
     function startVisualizer() {
-      audioContext = new (window.AudioContext||window.webkitAudioContext)();
-      analyser     = audioContext.createAnalyser();
-      sourceNode   = audioContext.createMediaStreamSource(stream);
+      audioContext=new (window.AudioContext||window.webkitAudioContext)();
+      analyser=audioContext.createAnalyser();
+      sourceNode=audioContext.createMediaStreamSource(stream);
       sourceNode.connect(analyser);
-      analyser.fftSize = 2048;
-      const dataArray = new Uint8Array(analyser.fftSize);
+      analyser.fftSize=2048;
+      const arr=new Uint8Array(analyser.fftSize);
       function draw() {
-        animId = requestAnimationFrame(draw);
-        analyser.getByteTimeDomainData(dataArray);
-        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--input-bg').trim();
+        animId=requestAnimationFrame(draw);
+        analyser.getByteTimeDomainData(arr);
+        ctx.fillStyle='rgba(255,255,255,0.8)';
         ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--blue').trim();
+        ctx.lineWidth=2;
+        ctx.strokeStyle=window.getComputedStyle(document.documentElement).getPropertyValue('--blue').trim();
         ctx.beginPath();
-        let x=0, slice=canvas.width/dataArray.length;
-        dataArray.forEach((v,i)=>{
+        let x=0, slice=canvas.width/arr.length;
+        arr.forEach((v,i)=>{
           const y=(v/128.0)*(canvas.height/2);
           i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
           x+=slice;
@@ -421,7 +319,7 @@
       }
       draw();
     }
-    function clearVisualizer() {
+    function clearVisualizer(){
       cancelAnimationFrame(animId);
       ctx.clearRect(0,0,canvas.width,canvas.height);
     }
@@ -430,12 +328,6 @@
     stopBtn  .addEventListener('click', stopRecording);
     resetBtn .addEventListener('click', resetRecording);
     uploadBtn.addEventListener('click', uploadAudio);
-
-    document.getElementById('nav-home').onclick    = ()=>location.href='https://natiphol22.github.io/WishesGallery/';
-    document.getElementById('nav-search').onclick  = ()=>location.href='https://natiphol.github.io/2/';
-    document.getElementById('nav-add').onclick     = ()=>location.href='#';
-    document.getElementById('nav-heart').onclick   = ()=>location.href='#';
-    document.getElementById('nav-profile').onclick = ()=>location.href='#';
   </script>
 </body>
 </html>
