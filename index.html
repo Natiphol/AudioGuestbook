@@ -29,31 +29,27 @@
       min-height: 100vh; padding: var(--spacing);
     }
     .card {
-      background: var(--glass-bg);
-      backdrop-filter: blur(10px);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow);
-      width: 100%; max-width: 480px;
-      padding: calc(var(--spacing)*1.5);
-      text-align: center;
+      background: var(--glass-bg); backdrop-filter: blur(10px);
+      border-radius: var(--radius-lg); box-shadow: var(--shadow);
+      width:100%; max-width:480px; padding:calc(var(--spacing)*1.5);
+      text-align:center;
     }
     .card h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.2rem;
-      margin-bottom: .5rem;
+      font-family:'Playfair Display', serif;
+      font-size:2.2rem; margin-bottom:.5rem;
     }
-    .card .subtitle {
-      font-size: 1rem; margin-bottom: calc(var(--spacing)*1.5);
-      opacity: .85;
+    .subtitle {
+      font-size:1rem; margin-bottom:calc(var(--spacing)*1.5);
+      opacity:.85;
     }
-    .card img.logo {
-      width: 100px; margin-bottom: var(--spacing);
-      border-radius: 50%;
+    .logo {
+      width:100px; margin-bottom:var(--spacing);
+      border-radius:50%;
     }
     .card input, .card select {
       width:100%; padding:.8rem 1rem; margin-bottom:var(--spacing);
       border:none; border-radius:var(--radius);
-      background: #fff; font-size:1rem;
+      background:#fff; font-size:1rem;
     }
     .card input:focus, .card select:focus {
       outline:none; box-shadow:0 0 0 3px var(--teal);
@@ -61,10 +57,9 @@
     .card button {
       width:100%; padding:.9rem 0; margin-top:var(--spacing);
       border:none; border-radius:var(--radius);
-      background: var(--blue); color:#fff;
+      background:var(--blue); color:#fff;
       font-size:1.05rem; cursor:pointer;
-      box-shadow: var(--shadow);
-      transition: transform .2s;
+      box-shadow: var(--shadow); transition:transform .2s;
     }
     .card button:not(:disabled):hover {
       transform: translateY(-2px);
@@ -87,8 +82,7 @@
     }
     audio {
       width:100%; margin-top:var(--spacing);
-      /* สำหรับ iOS inline playback */
-      playsinline; webkit-playsinline;
+      playsinline webkit-playsinline;
     }
     #progressRose {
       width:48px; height:48px; margin:var(--spacing) auto 0;
@@ -141,7 +135,7 @@
   <script>
     const nameInput       = document.getElementById('name');
     const groupSelect     = document.getElementById('group');
-    const playGreetingBtn = document.getElementById('playGreetingBtn');
+    const playBtn         = document.getElementById('playGreetingBtn');
     const startBtn        = document.getElementById('startBtn');
     const stopBtn         = document.getElementById('stopBtn');
     const resetBtn        = document.getElementById('resetBtn');
@@ -160,24 +154,25 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // ทำปุ่มฟังทักทายพร้อมเมื่อกรอกชื่อ
+    // ปลดล็อกปุ่มฟังทักทายเมื่อกรอกชื่อ
     nameInput.addEventListener('input', () => {
       nameInput.value = nameInput.value.replace(/[^A-Za-z\s]/g, '');
-      playGreetingBtn.disabled = !nameInput.value.trim();
+      playBtn.disabled = !nameInput.value.trim();
     });
 
-    let stream, mediaRecorder, audioChunks = [], audioBlob;
+    let stream, recorder, audioChunks = [], audioBlob;
+    let recorderStopResolved = null, recorderStopPromise = null;
+
     let audioContext, analyser, sourceNode, animId;
     let timerInterval, elapsed=0, greetingPlayed=false;
 
-    // เล่นเสียงทักทายจนจบ
-    playGreetingBtn.addEventListener('click', () => {
+    playBtn.addEventListener('click', () => {
       if (greetingPlayed) return;
-      const greeting = new Audio('https://natiphol.github.io/33/Test.mp3');
-      playGreetingBtn.disabled = true;
+      const greetingAudio = new Audio('https://natiphol.github.io/33/Test.mp3');
+      playBtn.disabled = true;
       statusDiv.textContent = '🎧 กำลังเล่นเสียงทักทาย...';
-      greeting.play().catch(()=>{});
-      greeting.addEventListener('ended', () => {
+      greetingAudio.play().catch(()=>{});
+      greetingAudio.addEventListener('ended', () => {
         greetingPlayed = true;
         startBtn.disabled = false;
         statusDiv.textContent = '🎧 ฟังทักทายเสร็จแล้ว กด “เริ่มอัด” ได้เลย';
@@ -194,42 +189,47 @@
         return alert('⚠️ ไม่สามารถเข้าถึงไมโครโฟนได้');
       }
       audioChunks = [];
-      mediaRecorder = new MediaRecorder(stream);
-      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-      mediaRecorder.onstop = onStop;
-      mediaRecorder.start();
+      recorder = new MediaRecorder(stream);
+      recorder.ondataavailable = e => audioChunks.push(e.data);
+      recorder.onstop = async () => {
+        audioBlob = new Blob(audioChunks, { type:'audio/mp4' });
+        audioPlayer.src = URL.createObjectURL(audioBlob);
+        // บังคับให้ iOS โหลดซ้ำ
+        audioPlayer.load();
+        // อัตโนมัติเล่นหลังหยุดอัด (ใน gesture)
+        audioPlayer.play().catch(()=>{});
+        resetBtn.disabled = false;
+        uploadBtn.disabled = false;
+        stopBtn.disabled = true;
+        clearInterval(timerInterval);
+        clearVisualizer();
+        stream.getTracks().forEach(t=>t.stop());
+      };
+      recorder.start();
 
-      startBtn.disabled=true; stopBtn.disabled=false;
-      statusDiv.textContent='🎙️ กำลังอัด...';
-      elapsed=0; timerDiv.textContent='00:00';
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+      statusDiv.textContent = '🎙️ กำลังอัด...';
+      elapsed = 0;
+      timerDiv.textContent = '00:00';
       timerInterval = setInterval(() => {
         elapsed++;
         const m = String(Math.floor(elapsed/60)).padStart(2,'0');
         const s = String(elapsed%60).padStart(2,'0');
         timerDiv.textContent = `⏱️ เวลาอัดเสียง: ${m}:${s}`;
-        if (elapsed>=180) stopRecording();
-      },1000);
+        if (elapsed >= 180) stopRecording();
+      }, 1000);
+
       startVisualizer();
     }
 
     function stopRecording() {
-      if (mediaRecorder?.state==='recording') mediaRecorder.stop();
-    }
-
-    function onStop() {
-      audioBlob = new Blob(audioChunks, { type:'audio/mp4' });
-      audioPlayer.src = URL.createObjectURL(audioBlob);
-      // บังคับให้ iOS โหลดซ้ำเพื่อเล่น inline
-      audioPlayer.load();
-      resetBtn.disabled=false; uploadBtn.disabled=false; stopBtn.disabled=true;
-      clearInterval(timerInterval);
-      clearVisualizer();
-      stream.getTracks().forEach(t=>t.stop());
+      if (recorder?.state === 'recording') recorder.stop();
     }
 
     function resetRecording() {
       if (!confirm('อัดใหม่หรือไม่?')) return;
-      audioChunks = []; audioBlob = null;
+      audioChunks=[]; audioBlob=null;
       audioPlayer.src = '';
       startBtn.disabled = false;
       stopBtn.disabled = true;
@@ -247,17 +247,17 @@
       progressRose.style.display = 'block';
       const reader = new FileReader();
       reader.onloadend = async () => {
-        const b64 = reader.result.split(',')[1];
+        const base64 = reader.result.split(',')[1];
         try {
           const res = await fetch(
             'https://script.google.com/macros/s/AKfycbxE_TYcDqqheROL652jb8wHmg3K9IHujV6nwrXADVlYqX-RSJNfp1TfdyZdL4Zm7oODMw/exec',
             {
-              method:'POST',
-              headers:{'Content-Type':'application/x-www-form-urlencoded'},
-              body:new URLSearchParams({
-                name:nameInput.value.trim(),
-                group:groupSelect.value,
-                audio:b64
+              method: 'POST',
+              headers: {'Content-Type':'application/x-www-form-urlencoded'},
+              body: new URLSearchParams({
+                name: nameInput.value.trim(),
+                group: groupSelect.value,
+                audio: base64
               })
             }
           );
@@ -303,7 +303,7 @@
       draw();
     }
 
-    function clearVisualizer(){
+    function clearVisualizer() {
       cancelAnimationFrame(animId);
       ctx.clearRect(0,0,canvas.width,canvas.height);
     }
